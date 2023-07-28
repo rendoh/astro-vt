@@ -1,0 +1,76 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="About page">
+  <about-page>
+    <h1>About page</h1>
+    <button class="my-button">button</button>
+    <a href="/">Back to top page.</a>
+  </about-page>
+</Layout>
+
+<style>
+  h1 {
+    text-align: center;
+    color: #fff;
+  }
+  a {
+    display: block;
+    color: #fff;
+    width: fit-content;
+    margin: 0 auto;
+  }
+  .my-button {
+    display: block;
+    margin: 20px auto;
+    padding: 10px 20px;
+    border-radius: 5px;
+    border: 1px solid #fff;
+    background-color: #fff;
+    color: #000;
+    cursor: pointer;
+  }
+</style>
+
+<script>
+  function initButton() {
+    document.querySelector('.my-button')?.addEventListener('click', () => {
+      console.log('button clicked! [slightly risky]');
+    });
+  }
+  document.addEventListener('astro:load', initButton);
+
+  class About extends HTMLElement {
+    private abortController = new AbortController();
+    constructor() {
+      super();
+      this.initEvents();
+    }
+    private initEvents() {
+      this.querySelector('.my-button')?.addEventListener(
+        'click',
+        () => {
+          console.log('button clicked! [somewhat safe]');
+        },
+        {
+          signal: this.abortController.signal, // 一応不要だがお作法的に
+        },
+      );
+
+      window.addEventListener(
+        'click',
+        () => {
+          console.log('window clicked!');
+        },
+        {
+          signal: this.abortController.signal,
+        },
+      );
+    }
+    public disconnectedCallback() {
+      this.abortController.abort();
+    }
+  }
+  customElements.define('about-page', About);
+</script>

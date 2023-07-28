@@ -1,4 +1,8 @@
 ---
+import type {
+  TransitionAnimationPair,
+  TransitionDirectionalAnimations,
+} from 'astro';
 import { ViewTransitions } from 'astro:transitions';
 interface Props {
   title: string;
@@ -6,6 +10,26 @@ interface Props {
 }
 
 const { title, current } = Astro.props;
+
+const anim: TransitionAnimationPair = {
+  old: {
+    name: 'zoomIn',
+    duration: '0.3s',
+    easing: 'ease-in-out',
+    fillMode: 'forwards',
+  },
+  new: {
+    name: 'zoomOut',
+    duration: '0.3s',
+    easing: 'ease-in-out',
+    fillMode: 'backwards',
+  },
+};
+
+const myFade: TransitionDirectionalAnimations = {
+  forwards: anim,
+  backwards: anim,
+};
 ---
 
 <!DOCTYPE html>
@@ -20,7 +44,7 @@ const { title, current } = Astro.props;
     <ViewTransitions />
   </head>
   <body>
-    <header>
+    <header transition:animate="morph">
       <h1>{title}</h1>
       <nav>
         <ul>
@@ -39,7 +63,9 @@ const { title, current } = Astro.props;
         </ul>
       </nav>
     </header>
-    <slot />
+    <div transition:animate={myFade}>
+      <slot />
+    </div>
     <style is:global>
       :root {
         --accent: 136, 58, 234;
@@ -96,6 +122,26 @@ const { title, current } = Astro.props;
         position: absolute;
         left: 0;
         bottom: -1px;
+      }
+      @keyframes zoomOut {
+        from {
+          opacity: 0;
+          scale: 0.9;
+        }
+        to {
+          opacity: 1;
+          scale: 1;
+        }
+      }
+      @keyframes zoomIn {
+        from {
+          opacity: 1;
+          scale: 1;
+        }
+        to {
+          opacity: 0;
+          scale: 1.1;
+        }
       }
     </style>
   </body>

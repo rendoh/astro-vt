@@ -2,9 +2,10 @@
 import { ViewTransitions } from 'astro:transitions';
 interface Props {
   title: string;
+  current: 'home' | 'about';
 }
 
-const { title } = Astro.props;
+const { title, current } = Astro.props;
 ---
 
 <!DOCTYPE html>
@@ -22,8 +23,20 @@ const { title } = Astro.props;
     <header>
       <h1>{title}</h1>
       <nav>
-        <a href="/">Home</a>
-        <a href="/about">About</a>
+        <ul>
+          <li>
+            <a href="/">Home</a>
+            {current === 'home' && <span transition:name="icon" class="icon" />}
+          </li>
+          <li>
+            <a href="/about">About</a>
+            {
+              current === 'about' && (
+                <span transition:name="icon" class="icon" />
+              )
+            }
+          </li>
+        </ul>
       </nav>
     </header>
     <slot />
@@ -60,6 +73,29 @@ const { title } = Astro.props;
       }
       header a {
         color: #fff;
+      }
+      ul {
+        display: flex;
+        list-style-type: none;
+        gap: 15px;
+      }
+      li {
+        display: flex;
+        position: relative;
+      }
+      a {
+        text-decoration: none;
+        font-size: 18px;
+      }
+      .icon {
+        display: inline-block;
+        width: 100%;
+        height: 2px;
+        border-radius: 50%;
+        background: #fff;
+        position: absolute;
+        left: 0;
+        bottom: -1px;
       }
     </style>
   </body>
